@@ -81,6 +81,8 @@ apply_to_results <- function(deseq_object, results, fun, ...) {
 #' @param neg_lab Label in the enumeration for downregulated expressed genes.
 #' @param title Title of the plot.
 #' @param top_n If not NULL, an integer. Keep only `top_n` rows by frequency.
+#' @param exclude_all_negative If TRUE, the case where all variables are zero is
+#'    omitted from the plot.
 #' 
 #' @param positive_symbol The symbol in the plot to give to the upregulated case.
 #' @param negative_symbol The symbol in the plot to give to the negative case.
@@ -106,7 +108,8 @@ plot_enumeration_frame <- function(
         positive_symbol = "+", negative_symbol = "-",
         symbol_size = 10,
         positive_color = "red", negative_color = "blue",
-        symbol_fontface = "bold"
+        symbol_fontface = "bold",
+        exclude_all_negative = FALSE
 ) {
     # Argument pre-parsing
     order_by <- order_by[1]
@@ -120,6 +123,14 @@ plot_enumeration_frame <- function(
     # return to ordered factors
     for (lab in all_factors) {
         frequencies[[lab]] <- factor(frequencies[[lab]], ordered = TRUE, levels = ord_factor_levels)
+    }
+    
+    # Delete the "all negatives" case, if asked
+    if (exclude_all_negative) {
+        truth_key <- apply(frequencies[, all_factors], 1, \(x) {all(x == zero_lab)})
+        # Stop if we detect more than one all negative case (something is terribly wrong)
+        assertthat::assert_that(sum(truth_key) == 1, msg = "More than one all zero case found! Aborting.")
+        frequencies <- frequencies[!truth_key, ] # we negate, as we want to exclude just that case
     }
     
     # add a static label of the combination of factors
