@@ -288,5 +288,8 @@ denumerate <- function(
         }) %>% as.data.frame()
     }
     
+    # Restore the row names
+    row.names(enum_frame) <- test_row_order
+    
     enum_frame
 }
