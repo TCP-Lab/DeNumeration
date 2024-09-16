@@ -203,7 +203,17 @@ plot_enumeration_frame <- function(
     Freq <- label <- margin <- neg <- pos <- variable <- NULL
     
     labels <- if (!is.null(category_renames)) {
-        
+        new_labs <- c()
+        for (label in levels(melted_legend$variable)) {
+            if (label %in% names(category_renames)) {
+                new_labs <- c(new_labs, category_renames[[label]])
+            } else {
+                new_labs <- c(new_labs, label)
+            }
+        }
+        new_labs
+    } else {
+        NULL
     }
     
     label_plot <- melted_legend %>% ggplot2::ggplot(ggplot2::aes(x = variable, y = label)) +
@@ -218,6 +228,9 @@ plot_enumeration_frame <- function(
             size = symbol_size, colour = positive_color, fontface=symbol_fontface,
             vjust=0.5, hjust=0.5,
             nudge_y=labels_y_nudge
+        ) +
+        ggplot2::scale_x_discrete(
+            labels=labels
         ) +
         ggplot2::scale_y_discrete(
             limits=melted_legend$label[frequencies$order],
