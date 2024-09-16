@@ -16,7 +16,7 @@
 #'    enumeration labels based on the filter in the column "colname", by default
 #'    "class".
 #' 
-#' @author 
+#' @author Hedmad
 #'    
 #' @export
 to_enumeration_vector <- function(
@@ -83,6 +83,9 @@ apply_to_results <- function(deseq_object, results, fun, ...) {
 #' @param top_n If not NULL, an integer. Keep only `top_n` rows by frequency.
 #' @param exclude_all_negative If TRUE, the case where all variables are zero is
 #'    omitted from the plot.
+#' @param category_renames A list of `old_label = new_label` with the new names
+#'    of the enumeration categories. The old labels are the column names of the
+#'    input enumeration data.
 #' 
 #' @param positive_symbol The symbol in the plot to give to the upregulated case.
 #' @param negative_symbol The symbol in the plot to give to the negative case.
@@ -100,6 +103,8 @@ apply_to_results <- function(deseq_object, results, fun, ...) {
 #' 
 #' @return A `ggproto` object with the resulting plot.
 #' 
+#' @author Hedmad
+#' 
 #' @export
 plot_enumeration_frame <- function(
         enum_data, order_by = c("frequency", "label"),
@@ -109,7 +114,8 @@ plot_enumeration_frame <- function(
         symbol_size = 10,
         positive_color = "red", negative_color = "blue",
         symbol_fontface = "bold",
-        exclude_all_negative = FALSE
+        exclude_all_negative = FALSE,
+        category_renames = NULL
 ) {
     # Argument pre-parsing
     order_by <- order_by[1]
@@ -195,6 +201,10 @@ plot_enumeration_frame <- function(
     # Fuck you CRAN, and fuck you R.
     
     Freq <- label <- margin <- neg <- pos <- variable <- NULL
+    
+    labels <- if (!is.null(category_renames)) {
+        
+    }
     
     label_plot <- melted_legend %>% ggplot2::ggplot(ggplot2::aes(x = variable, y = label)) +
         ggplot2::geom_text(

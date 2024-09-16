@@ -1,6 +1,6 @@
 Package: DeNumerator
 Title: Denumerate A DESeq2 Object To See It Better
-Version: 0.1.2-dev
+Version: 0.1.2
 Authors@R: 
     person("Luca", "Visentin", , "luca.visentin@unito.it", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0003-2568-5694"))
@@ -20,3 +20,10 @@ Imports:
     stats,
     tibble,
     utils
+Suggests: 
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
+Depends: 
+    R (>= 2.10)
+LazyData: true

@@ -41,3 +41,6 @@ enumeration labels based on the filter in the column "colname", by default
 \description{
 Convert a DESeq2 "result" object to an enumeration object
 }
+\author{
+Hedmad
+}

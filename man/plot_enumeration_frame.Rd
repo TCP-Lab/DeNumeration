@@ -18,7 +18,9 @@ plot_enumeration_frame(
   symbol_size = 10,
   positive_color = "red",
   negative_color = "blue",
-  symbol_fontface = "bold"
+  symbol_fontface = "bold",
+  exclude_all_negative = FALSE,
+  category_renames = NULL
 )
 }
 \arguments{
@@ -56,6 +58,13 @@ so that they are perfectly aligned for your specific usecase.}
 \item{negative_color}{The color in the plot to give to the negative case.}
 
 \item{symbol_fontface}{The font face of the positive and negative symbols.}
+
+\item{exclude_all_negative}{If TRUE, the case where all variables are zero is
+omitted from the plot.}
+
+\item{category_renames}{A list of \code{old_label = new_label} with the new names
+of the enumeration categories. The old labels are the column names of the
+input enumeration data.}
 }
 \value{
 A \code{ggproto} object with the resulting plot.
@@ -63,4 +72,7 @@ A \code{ggproto} object with the resulting plot.
 \description{
 This function takes care of computing frequency tables from input enumerations
 and plotting the resulting frequency graph.
+}
+\author{
+Hedmad
 }

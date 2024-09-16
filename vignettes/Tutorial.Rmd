@@ -1,0 +1,79 @@
+---
+title: "Tutorial"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Tutorial}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(DeNumerator)
+```
+
+Welcome to DeNumerator. This vignette will show you everything the package can do.
+
+DeNumerator is designed to explore the results for a DESeq2 analysis, so, we start with such an analysis.
+
+The `count_data` is a count matrix with genes as rows and samples as columns:
+```{r}
+head(DeNumerator::count_data)
+```
+The metadata for these samples is contained in the `count_metadata` object:
+```{r}
+head(DeNumerator::count_metadata)
+```
+
+We are interested in a complicated model: the effect of `cond_one`, of `cond_two` and of the interaction between the two.
+Imagine the two conditions to be treatments used on cells of some drug.
+This complicated model would answer the question(s): "What are the effects of the two drugs on gene expression? Is there a synergistic effect of the two drugs?".
+
+We are ready to run DESeq2 on this data:
+```{r}
+requireNamespace("DESeq2")
+
+dds <- DESeq2::DESeqDataSetFromMatrix(
+    DeNumerator::count_data, DeNumerator::count_metadata,
+    # This formula is the expansion of '~ cond_one * cond_two'
+    ~ cond_one + cond_two + cond_one:cond_two
+)
+dds_res <- DESeq2::DESeq(dds)
+```
+
+One would now normally inspect the results manually, but it's hard to do this with the pesky interaction term.
+Here's where DeNumerator comes it. It can take the resulting dataset and enumerate all the possible states (upregulated, downregulated, not differentially expressed) that the genes can be in, and show a nice resulting graph.
+
+To define these states, we have to set the alpha (p-value) threshold and a fold-change threshold, like this:
+
+```{r fig.width=7, fig.height=5}
+enum <- denumerate(
+    dds_res, alpha = 0.05, fold_change = 1,
+    new_labels = list(
+        "cond_one_b_vs_a" = "b_vs_a",
+        "cond_two_d_vs_c" = "d_vs_c",
+        "cond_oneb.cond_twod" = "interaction"
+    )
+)
+
+plot_enumeration_frame(enum, exclude_all_negative = TRUE)
+```
+
+We can now appreciate all the numerosities in the genes with the different states in the three conditions.
+
+For further information on all the options available to you, consult the help pages of the functions.
+
+### Extracting gene names
+
+DeNumerator preserves the gene names from the DESeq2 object. You can therefore access them after you set the thresholds in the `enum` object to quickly retrieve the gene names for a combination of states of interest, like such:
+
+```{r}
+# We should obtain seven genes (see the above plot)
+row.names(enum)[enum$b_vs_a == "negative" & enum$d_vs_c == "positive" & enum$interaction == "positive"]
+```
