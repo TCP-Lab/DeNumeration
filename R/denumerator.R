@@ -213,7 +213,7 @@ plot_enumeration_frame <- function(
         }
         new_labs
     } else {
-        NULL
+        levels(melted_legend$variable)
     }
     
     label_plot <- melted_legend %>% ggplot2::ggplot(ggplot2::aes(x = variable, y = label)) +
