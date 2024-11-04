@@ -59,10 +59,20 @@ To do this, simply use:
 DeNumerator::plot_enumeration_frame(enum)
 ```
 This plot shows the numerosity of each combination of effects.
+Here's an example enumeration plot with three variables; `a`, `b`, and their interaction:
+
+<details>
+  <summary>Click here to show plot</summary>
+
+![example plot](https://github.com/TCP-Lab/DeNumerator/blob/main/resources/example_plot.png?raw=true)
+
+</details>
+
 If you have many possible combinations (each factor in the original formula triplicates the possibilities, as in `3^length(factors)`),
 it's advised to use the `top_n` argument to only show the most populated categories.
 
 `plot_enumeration_frame` has many arguments that you can use to tweak the plot to your liking.
+It also returns a `ggplot2` object, that you can continue adding layers to or combine (e.g. with the `patchwork` library).
 
 ### Getting a list of genes
 When you are interested in the actual list of genes from each enumeration, you can take them out of the `enum` object directly with simple R code:
